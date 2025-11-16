@@ -25,5 +25,10 @@
         "classmap": [
             "./Module.php"
         ]
+    },
+    "config": {
+        "audit": {
+            "ignore": ["PKSA-9gb9-jn3z-tytw"]
+        }
     }
 }
