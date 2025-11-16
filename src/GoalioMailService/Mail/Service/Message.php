@@ -1,39 +1,15 @@
 <?php
 namespace GoalioMailService\Mail\Service;
 
+use Zend\Mail\Transport\TransportInterface;
 use Zend\Mime\Mime;
-use Zend\ServiceManager\ServiceManager;
-use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\Mail\Message as MailMessage;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
+use Zend\View\Model\ModelInterface;
+use Zend\View\Renderer\RendererInterface;
 
-class Message implements ServiceManagerAwareInterface {
-
-    /**
-     *
-     * @var ServiceManager
-     */
-    protected $serviceManager;
-
-    /**
-     *
-     * @param ServiceManager $serviceManager
-     * @return AbstractService
-     */
-    public function setServiceManager(ServiceManager $serviceManager) {
-        $this->serviceManager = $serviceManager;
-        return $this;
-    }
-
-    /**
-     *
-     * @return ServiceManager
-     */
-    public function getServiceManager() {
-        return $this->serviceManager;
-    }
-
+class Message {
     /**
      *
      * @var \Zend\View\Renderer\RendererInterface
@@ -46,6 +22,12 @@ class Message implements ServiceManagerAwareInterface {
      */
     protected $transport;
 
+    public function __construct(RendererInterface $renderer, TransportInterface $transport)
+    {
+        $this->renderer = $renderer;
+        $this->transport = $transport;
+    }
+
     /**
      * Return a HTML message ready to be sent
      *
@@ -55,7 +37,7 @@ class Message implements ServiceManagerAwareInterface {
      *            An array containing the recipients of the mail
      * @param string $subject
      *            Subject of the mail
-     * @param string|\Zend\View\Model\ModelInterface $nameOrModel
+     * @param string|ModelInterface $nameOrModel
      *            Either the template to use, or a ViewModel
      * @param null|array $values
      *            Values to use when the template is rendered
@@ -87,7 +69,7 @@ class Message implements ServiceManagerAwareInterface {
      *            An array containing the recipients of the mail
      * @param string $subject
      *            Subject of the mail
-     * @param string|\Zend\View\Model\ModelInterface $nameOrModel
+     * @param string|ModelInterface $nameOrModel
      *            Either the template to use, or a ViewModel
      * @param null|array $values
      *            Values to use when the template is rendered
@@ -116,23 +98,7 @@ class Message implements ServiceManagerAwareInterface {
      * @return \Zend\View\Renderer\RendererInterface
      */
     public function getRenderer() {
-        if($this->renderer === null) {
-            $serviceManager = $this->getServiceManager();
-            $this->renderer = $serviceManager->get('goaliomailservice_renderer');
-        }
-
         return $this->renderer;
-    }
-
-    /**
-     * @param \Zend\View\Renderer\RendererInterface $renderer
-     *
-     * @return $this
-     */
-    public function setRenderer($renderer) {
-        $this->renderer = $renderer;
-
-        return $this;
     }
 
     /**
@@ -141,23 +107,7 @@ class Message implements ServiceManagerAwareInterface {
      * @return \Zend\Mail\Transport\TransportInterface
      */
     public function getTransport() {
-        if($this->transport === null) {
-            $this->transport = $this->getServiceManager()
-                ->get('goaliomailservice_transport');
-        }
-
         return $this->transport;
-    }
-
-    /**
-     * @param \Zend\Mail\Transport\TransportInterface $transport
-     *
-     * @return $this
-     */
-    public function setTransport($transport) {
-        $this->transport = $transport;
-
-        return $this;
     }
 
     /**
